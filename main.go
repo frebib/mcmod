@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/frebib/mcmod/cmd"
+	modlog "github.com/frebib/mcmod/log"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"github.com/x-cray/logrus-prefixed-formatter"
@@ -29,6 +30,8 @@ func init() {
 }
 
 func main() {
+	ctx := context.WithValue(context.Background(), "log", log)
+
 	var app = &cli.App{
 		Name:  "mcmod",
 		Usage: "download, update and manage ad-hoc curseforge mod lists",
@@ -43,7 +46,7 @@ func main() {
 			&lvlFlag,
 		},
 		Before: func(c *cli.Context) error {
-			log := c.App.Metadata["log"].(*logrus.Entry)
+			log := modlog.FromContext(c.Context)
 			lvl, err := logrus.ParseLevel(c.String(lvlFlag.Name))
 			if err != nil {
 				return err
@@ -52,10 +55,9 @@ func main() {
 
 			return nil
 		},
-		Metadata: map[string]interface{}{"log": log},
 	}
 
-	err := app.Run(os.Args)
+	err := app.RunContext(ctx, os.Args)
 	if err != nil {
 		log.WithError(err).Fatal()
 	}

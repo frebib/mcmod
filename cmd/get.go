@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/sirupsen/logrus"
+	modlog "github.com/frebib/mcmod/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -15,8 +15,8 @@ var (
 )
 
 func cmdDoGet(c *cli.Context) (err error) {
-	logger := c.App.Metadata["log"].(*logrus.Entry)
-	log := logger.WithField("prefix", "get")
+	ctx := c.Context
+	log := modlog.FromContext(ctx)
 
 	if c.NArg() < 1 {
 		log.Error("missing required arg: " + c.Command.ArgsUsage)
@@ -27,4 +27,3 @@ func cmdDoGet(c *cli.Context) (err error) {
 
 	return nil
 }
-
