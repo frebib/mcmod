@@ -7,7 +7,6 @@ import (
 	"github.com/frebib/mcmod/download"
 	modlog "github.com/frebib/mcmod/log"
 	"github.com/frebib/mcmod/util"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -47,8 +46,8 @@ func cmdDoGet(c *cli.Context) (err error) {
 	if err != nil {
 		return err
 	}
-	log = log.WithFields(logrus.Fields{"id": mod.ID, "name": mod.Slug})
-	log.Info("found mod")
+	ctx, log = modlog.SetContextLogger(ctx, log.WithField("mod", mod.Slug))
+	log.WithField("id", mod.ID).Info("found mod")
 
 	files, err := api.ClientFromContext(ctx).Files(ctx, mod.ID)
 	if err != nil {

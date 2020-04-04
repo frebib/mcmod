@@ -31,7 +31,7 @@ func init() {
 }
 
 func main() {
-	ctx := context.WithValue(context.Background(), "log", log)
+	ctx, log := modlog.SetContextLogger(nil, log)
 
 	var app = &cli.App{
 		Name:  "mcmod",
