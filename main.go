@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/frebib/mcmod/api"
 	"github.com/frebib/mcmod/cmd"
 	modlog "github.com/frebib/mcmod/log"
 	"github.com/sirupsen/logrus"
@@ -52,6 +53,8 @@ func main() {
 				return err
 			}
 			log.Logger.SetLevel(lvl)
+
+			c.Context = context.WithValue(ctx, api.ClientKey, api.DefaultClient)
 
 			return nil
 		},

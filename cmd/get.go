@@ -43,14 +43,14 @@ func cmdDoGet(c *cli.Context) (err error) {
 		return
 	}
 
-	mod, err := api.DefaultClient.Lookup(ctx, c.Args().First())
+	mod, err := api.ClientFromContext(ctx).Lookup(ctx, c.Args().First())
 	if err != nil {
 		return err
 	}
 	log = log.WithFields(logrus.Fields{"id": mod.ID, "name": mod.Slug})
 	log.Info("found mod")
 
-	files, err := api.DefaultClient.Files(ctx, mod.ID)
+	files, err := api.ClientFromContext(ctx).Files(ctx, mod.ID)
 	if err != nil {
 		log.WithError(err).Errorf("failed to list mod files")
 		return err

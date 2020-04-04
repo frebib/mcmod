@@ -26,6 +26,21 @@ var DefaultClient = &ApiClient{
 	ApiUrl:     ApiUrl,
 }
 
+// ClientKey is the textual key used to identify
+// an API Client inside a context.Context object
+const ClientKey = "api-client"
+
+// ClientFromContext loads a configured ApiClient from a context
+// or returns the DefaultClient if none is found in the context
+func ClientFromContext(ctx context.Context) *ApiClient {
+	clientObj := ctx.Value(ClientKey)
+	client, ok := clientObj.(*ApiClient)
+	if ok {
+		return client
+	}
+	return DefaultClient
+}
+
 func fetchJSON(ctx context.Context, client *http.Client, method, url string,
 	body io.Reader) (*http.Response, error) {
 
