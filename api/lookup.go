@@ -57,6 +57,5 @@ func (c *ApiClient) Lookup(ctx context.Context, modNameId string) (addon *Addon,
 		}
 	}
 
-
 	return addon, err
 }

@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/frebib/mcmod/util"
 )
 
 type Files []File
@@ -103,7 +105,7 @@ func FileFilterVersion(ver string) FileFilter {
 	var verClos = ver
 	return FileFilter{
 		func(file *File) bool {
-			return StringInSlice(file.GameVersion, verClos)
+			return util.StringInSlice(file.GameVersion, verClos)
 		},
 		nil,
 	}

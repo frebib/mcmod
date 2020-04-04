@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"path"
 	"sort"
 
 	"github.com/frebib/mcmod/api"
 	"github.com/frebib/mcmod/download"
 	modlog "github.com/frebib/mcmod/log"
+	"github.com/frebib/mcmod/util"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -68,23 +68,23 @@ func cmdDoGet(c *cli.Context) (err error) {
 		log.Warn("no download found")
 		return nil
 	}
+
 	// Pick the latest release
-	dl := files[0]
+	var toDownload = []api.File{files[0]}
 
-	filePath := dl.FileName
-	outputDirectory := c.String("directory")
-	overrideFileName := c.String("output-file")
-	if overrideFileName != "" {
-		ovDir, _ := path.Split(overrideFileName)
-		if ovDir != "" && outputDirectory != "" {
-			log.Fatal("conflicting output-file path and directory provided.")
+	for _, dl := range toDownload {
+		// Calculate final path+filename for mod output
+		outFile := c.String(flagOutputFile.Name)
+		outDir := c.String(flagDirectory.Name)
+		filePath, err := util.CalcFilePath(dl.FileName, outFile, outDir)
+		if err != nil {
+			return err
 		}
-		if overrideFileName == "-" {
-			overrideFileName = "/dev/stdout"
+
+		err = download.FileFromURL(ctx, dl.DownloadURL, filePath)
+		if err != nil {
+			return err
 		}
-		filePath = overrideFileName
 	}
-	filePath = path.Join(outputDirectory, filePath)
-
-	return download.FileFromURL(ctx, dl.DownloadURL, filePath)
+	return nil
 }
