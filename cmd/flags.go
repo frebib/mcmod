@@ -32,4 +32,10 @@ var (
 		Value:   api.ReleaseRelease.String(),
 		EnvVars: []string{"RELEASE_TYPE"},
 	}
+	flagNoDeps = cli.BoolFlag{
+		Name:    "no-dependencies",
+		Usage:   "do not download dependent mods",
+		Aliases: []string{"D"},
+		EnvVars: []string{"SKIP_DEPENDENCIES"},
+	}
 )

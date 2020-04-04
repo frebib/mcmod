@@ -14,27 +14,35 @@ import (
 type Files []File
 
 type File struct {
-	ID                      int           `json:"id"`
-	DisplayName             string        `json:"displayName"`
-	FileName                string        `json:"fileName"`
-	FileDate                time.Time     `json:"fileDate"`
-	FileLength              int           `json:"fileLength"`
-	ReleaseType             ReleaseType   `json:"releaseType"`
-	FileStatus              int           `json:"fileStatus"`
-	DownloadURL             string        `json:"downloadUrl"`
-	IsAlternate             bool          `json:"isAlternate"`
-	AlternateFileID         int           `json:"alternateFileId"`
-	Dependencies            []interface{} `json:"dependencies"`
-	IsAvailable             bool          `json:"isAvailable"`
-	Modules                 []Module      `json:"modules"`
-	PackageFingerprint      int64         `json:"packageFingerprint"`
-	GameVersion             []string      `json:"gameVersion"`
-	InstallMetadata         interface{}   `json:"installMetadata"`
-	ServerPackFileID        interface{}   `json:"serverPackFileId"`
-	HasInstallScript        bool          `json:"hasInstallScript"`
-	GameVersionDateReleased time.Time     `json:"gameVersionDateReleased"`
-	GameVersionFlavor       interface{}   `json:"gameVersionFlavor"`
+	ID                      int          `json:"id"`
+	DisplayName             string       `json:"displayName"`
+	FileName                string       `json:"fileName"`
+	FileDate                time.Time    `json:"fileDate"`
+	FileLength              int          `json:"fileLength"`
+	ReleaseType             ReleaseType  `json:"releaseType"`
+	FileStatus              int          `json:"fileStatus"`
+	DownloadURL             string       `json:"downloadUrl"`
+	IsAlternate             bool         `json:"isAlternate"`
+	AlternateFileID         int          `json:"alternateFileId"`
+	Dependencies            []Dependency `json:"dependencies"`
+	IsAvailable             bool         `json:"isAvailable"`
+	Modules                 []Module     `json:"modules"`
+	PackageFingerprint      int64        `json:"packageFingerprint"`
+	GameVersion             []string     `json:"gameVersion"`
+	InstallMetadata         interface{}  `json:"installMetadata"`
+	ServerPackFileID        interface{}  `json:"serverPackFileId"`
+	HasInstallScript        bool         `json:"hasInstallScript"`
+	GameVersionDateReleased time.Time    `json:"gameVersionDateReleased"`
+	GameVersionFlavor       interface{}  `json:"gameVersionFlavor"`
 }
+
+type Dependency struct {
+	ID      int `json:"id"`
+	AddonID int `json:"addonId"`
+	Type    int `json:"type"`
+	FileID  int `json:"fileId"`
+}
+
 type Module struct {
 	Foldername  string `json:"foldername"`
 	Fingerprint int64  `json:"fingerprint"`
