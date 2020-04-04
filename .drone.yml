@@ -1,0 +1,25 @@
+kind: pipeline
+type: docker
+name: build
+
+steps:
+- name: build
+  image: golang:alpine
+  commands:
+  - go get
+  - go build
+  - test -z "$(gofmt -l . | tee /dev/stderr)"
+
+---
+kind: pipeline
+type: docker
+name: lint
+
+steps:
+- name: lint
+  image: golang:alpine
+  commands:
+  - go get -u golang.org/x/lint/golint
+  # when all the lint errors go away, we can actually fail on it
+  #- golint -set_exit_status ./...
+  - golint ./...
