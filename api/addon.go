@@ -181,7 +181,7 @@ func setDefaultUnsetOptions(opts *AddonSearchOption) *AddonSearchOption {
 	return opts
 }
 
-func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (*SearchResult, error) {
+func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (SearchResult, error) {
 	params, err := query.Values(setDefaultUnsetOptions(&opts))
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (*S
 	}
 	defer resp.Body.Close()
 	var result SearchResult
-	return &result, json.NewDecoder(resp.Body).Decode(&result)
+	return result, json.NewDecoder(resp.Body).Decode(&result)
 }
 
 func (c *ApiClient) AddonByID(ctx context.Context, id int) (*Addon, error) {
