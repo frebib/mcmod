@@ -25,6 +25,11 @@ func (c *ApiClient) Lookup(ctx context.Context, modNameId string) (addon *Addon,
 				Errorf("failed to search")
 		}
 
+		// Found nothing for the search term
+		if len(results) < 1 {
+			return nil, &ErrNoSuchAddon{Name: modNameId}
+		}
+
 		addon = results.FindBySlug(modNameId)
 		if addon != nil {
 			log.Debug("matched mod by slug")
