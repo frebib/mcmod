@@ -40,7 +40,8 @@ func (c *ApiClient) Lookup(ctx context.Context, modNameId string) (addon *Addon,
 			}
 		}
 		if addon == nil {
-			return nil, &ErrNoSuchAddon{Name: modNameId}
+			// Give up and just return the first result
+			return &results[0], nil
 		}
 	} else {
 		log.WithField("id", id).
