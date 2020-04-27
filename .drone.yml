@@ -23,3 +23,15 @@ steps:
   # when all the lint errors go away, we can actually fail on it
   #- golint -set_exit_status ./...
   - golint ./...
+
+---
+kind: pipeline
+type: docker
+name: test
+
+steps:
+- name: unit
+  image: golang:alpine
+  commands:
+  - apk --no-cache add gcc musl-dev
+  - go test -covermode atomic ./...
