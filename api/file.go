@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -96,12 +95,19 @@ func (c *ApiClient) Files(ctx context.Context, mod int) (files Files, err error)
 		return nil, err
 	}
 
-	resp, err := fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil)
+	_, err = fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil, &files)
+	return
+}
+
+func (c *ApiClient) FileByID(ctx context.Context, addon, file int) (res *File, err error) {
+	path := fmt.Sprintf("v2/addon/%d/file/%d/download-url", addon, file)
+	queryUrl, err := buildURL(c.ApiUrl, path, "")
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	return files, json.NewDecoder(resp.Body).Decode(&files)
+
+	_, err = fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil, &res)
+	return
 }
 
 type FileFilter struct {

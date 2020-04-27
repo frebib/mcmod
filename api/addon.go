@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
@@ -204,7 +203,7 @@ func setDefaultUnsetOptions(opts *AddonSearchOption) *AddonSearchOption {
 	return opts
 }
 
-func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (SearchResult, error) {
+func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (res SearchResult, err error) {
 	params, err := query.Values(setDefaultUnsetOptions(&opts))
 	if err != nil {
 		return nil, err
@@ -214,26 +213,16 @@ func (c *ApiClient) AddonSearch(ctx context.Context, opts AddonSearchOption) (Se
 		return nil, err
 	}
 
-	resp, err := fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	var result SearchResult
-	return result, json.NewDecoder(resp.Body).Decode(&result)
+	_, err = fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil, &res)
+	return
 }
 
-func (c *ApiClient) AddonByID(ctx context.Context, id int) (*Addon, error) {
+func (c *ApiClient) AddonByID(ctx context.Context, id int) (addon *Addon, err error) {
 	queryUrl, err := buildURL(c.ApiUrl, "v2/addon/"+strconv.Itoa(id), "")
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	var addon Addon
-	return &addon, json.NewDecoder(resp.Body).Decode(&addon)
+	_, err = fetchJSON(ctx, c.HttpClient, "GET", queryUrl, nil, &addon)
+	return
 }

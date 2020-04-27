@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -42,7 +43,7 @@ func ClientFromContext(ctx context.Context) *ApiClient {
 }
 
 func fetchJSON(ctx context.Context, client *http.Client, method, url string,
-	body io.Reader) (*http.Response, error) {
+	body io.Reader, output interface{}) (*http.Response, error) {
 
 	log := modlog.FromContext(ctx)
 
@@ -73,6 +74,11 @@ func fetchJSON(ctx context.Context, client *http.Client, method, url string,
 			bodyText = string(bodyBytes)
 		}
 		return resp, &ErrHttpStatus{req, resp.StatusCode, bodyText}
+	}
+
+	if output != nil {
+		defer resp.Body.Close()
+		return resp, json.NewDecoder(resp.Body).Decode(&output)
 	}
 	return resp, err
 }
