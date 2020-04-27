@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	mc "github.com/frebib/mcmod/minecraft"
 	"github.com/google/go-querystring/query"
 )
 
@@ -40,6 +41,15 @@ type Addon struct {
 	IsAvailable            bool                         `json:"isAvailable"`
 	IsExperiemental        bool                         `json:"isExperiemental"`
 }
+
+func (a *Addon) SupportedVersions() mc.Versions {
+	versions := make([]mc.Version, 0)
+	for _, file := range a.GameVersionLatestFiles {
+		versions = append(versions, file.GameVersion)
+	}
+	return versions
+}
+
 type AddonAuthor struct {
 	Name              string      `json:"name"`
 	URL               string      `json:"url"`
@@ -133,7 +143,7 @@ type AddonCategorySection struct {
 	GameCategoryID          int         `json:"gameCategoryId"`
 }
 type AddonGameVersionLatestFile struct {
-	GameVersion       string      `json:"gameVersion"`
+	GameVersion       mc.Version  `json:"gameVersion"`
 	ProjectFileID     int         `json:"projectFileId"`
 	ProjectFileName   string      `json:"projectFileName"`
 	FileType          int         `json:"fileType"`
@@ -163,16 +173,29 @@ func (sr *SearchResult) FindByName(name string) *Addon {
 }
 
 type AddonSearchOption struct {
-	CategoryID  int    `url:"categoryID,omitempty"`
-	SectionId   int    `url:"sectionId,omitempty"`
-	GameId      int    `url:"gameId"`
-	GameVersion string `url:"gameVersion,omitempty"`
-	Index       int    `url:"index,omitempty"`
-	PageSize    int    `url:"pageSize"`
-	Filter      string `url:"searchFilter"`
-	Slug        string `url:"slug,omitempty"`
-	Sort        int    `url:"sort,omitempty"`
+	CategoryID  int             `url:"categoryID,omitempty"`
+	SectionId   int             `url:"sectionId,omitempty"`
+	GameId      int             `url:"gameId"`
+	GameVersion string          `url:"gameVersion,omitempty"`
+	Index       int             `url:"index,omitempty"`
+	PageSize    int             `url:"pageSize"`
+	Filter      string          `url:"searchFilter"`
+	Slug        string          `url:"slug,omitempty"`
+	Sort        AddonSortMethod `url:"sort"`
 }
+
+type AddonSortMethod int
+
+const (
+	AddonSortDefault AddonSortMethod = iota // Also known as "popularity"
+	AddonSortPopularity
+	AddonSortLastUpdated
+	AddonSortName
+	AddonSortAuthor
+	AddonSortTotalDownloads
+	AddonSortCategory
+	AddonSortGameVersion
+)
 
 func setDefaultUnsetOptions(opts *AddonSearchOption) *AddonSearchOption {
 	if opts.PageSize == 0 {

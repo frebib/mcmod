@@ -3,11 +3,19 @@ package util
 import (
 	"errors"
 	"path"
+	"strings"
 )
 
 var (
 	ErrConflictingPaths = errors.New("conflicting output path and directory provided")
 )
+
+func EllipsiseString(str string, num int) string {
+	if len(str) > num {
+		str = strings.TrimSpace(str[0:num-1]) + "…"
+	}
+	return str
+}
 
 func StringInSlice(haystack []string, needle string) bool {
 	for _, str := range haystack {
