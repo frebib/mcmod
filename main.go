@@ -42,6 +42,7 @@ func main() {
 
 		Commands: []*cli.Command{
 			cmd.Get,
+			cmd.Search,
 		},
 		Flags: []cli.Flag{
 			&lvlFlag,
