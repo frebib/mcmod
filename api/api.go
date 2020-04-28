@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 
 	modlog "github.com/frebib/mcmod/log"
 )
@@ -82,18 +81,21 @@ func fetchJSON(ctx context.Context, client *http.Client, method, url string,
 	}
 	return resp, err
 }
+
 func buildURL(base, urlPath string, params string) (string, error) {
-	urlObj, err := url.Parse(base)
+	// Ensure base part to the URL has a trailing slash. net/url will sanitise
+	baseUrl, err := url.Parse(base + "/")
 	if err != nil {
 		return "", err
 	}
-
-	path.Join()
-	urlObj.Path = path.Join(urlObj.Path, urlPath)
-	urlObj.RawQuery = params
-
-	return urlObj.String(), nil
+	fullUrl, err := baseUrl.Parse(urlPath)
+	if err != nil {
+		return "", err
+	}
+	fullUrl.RawQuery = params
+	return fullUrl.String(), nil
 }
+
 func buildURLParams(base, path string, params *url.Values) (string, error) {
 	return buildURL(base, path, params.Encode())
 }
