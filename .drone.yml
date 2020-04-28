@@ -21,6 +21,13 @@ type: docker
 name: lint
 
 steps:
+- name: imports
+  image: golang:alpine
+  commands:
+  - apk --no-cache add git
+  - go get -u golang.org/x/tools/cmd/goimports
+  - test -z "$(goimports -local -e -d . | tee /dev/stderr)"
+
 - name: lint
   image: golang:alpine
   commands:
