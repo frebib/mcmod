@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/frebib/mcmod/api"
@@ -93,14 +94,17 @@ func cmdDoGet(c *cli.Context) (err error) {
 
 				depFiles, err := listFilterMods(ctx, depID, filter)
 				if err != nil {
-					return
+					var unused *ErrNoMatch
+					if errors.As(err, &unused) {
+						log.Warnf("no download found, skipping")
+					} else {
+						return
+					}
 				}
 				if len(depFiles) > 0 {
 					mu.Lock()
 					toDownload = append(toDownload, &depFiles[0])
 					mu.Unlock()
-				} else {
-					log.Warnf("no download found, skipping")
 				}
 			}(ctx, dep.AddonID)
 		}

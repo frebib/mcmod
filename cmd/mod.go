@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"reflect"
 	"sort"
+	"strings"
 
 	"github.com/frebib/mcmod/api"
 	modlog "github.com/frebib/mcmod/log"
@@ -11,6 +15,24 @@ import (
 type ModFilter struct {
 	Release api.ReleaseType
 	Version string
+}
+
+func (f *ModFilter) String() string {
+	s := reflect.ValueOf(f).Elem()
+	filterType := s.Type()
+
+	var buf bytes.Buffer
+	for i := 0; i < s.NumField(); i++ {
+		f := s.Field(i)
+		fmt.Fprintf(&buf, "%s=%v ",
+			strings.ToLower(filterType.Field(i).Name),
+			f.Interface(),
+		)
+	}
+
+	str := buf.String()
+	// Truncate the trailing space
+	return str[0 : len(str)-1]
 }
 
 func listFilterMods(ctx context.Context, modID int, filter *ModFilter) (api.Files, error) {
@@ -31,8 +53,7 @@ func listFilterMods(ctx context.Context, modID int, filter *ModFilter) (api.File
 	// Sort by release date, newest first
 	sort.Sort(files)
 	if len(files) < 1 {
-		log.Warn("no download found")
-		return nil, err
+		return nil, &ErrNoMatch{*filter}
 	}
 	return files, nil
 }
