@@ -7,8 +7,13 @@ steps:
   image: golang:alpine
   commands:
   - go get
-  - go build
+  - go build -o mcmod
   - test -z "$(gofmt -l . | tee /dev/stderr)"
+
+- name: run
+  image: alpine
+  commands:
+  - ./mcmod -l trace get notenoughitems
 
 ---
 kind: pipeline
