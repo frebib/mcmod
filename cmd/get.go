@@ -65,8 +65,11 @@ func cmdDoGet(c *cli.Context) (err error) {
 		Tracef("chose '%s' as latest file", modFile.FileName)
 	var toDownload = []*api.File{&modFile}
 
-	// Download optional dependencies, unless otherwise specified
-	if !c.Bool(flagNoDeps.Name) {
+	// Download optional dependencies, if any, unless otherwise specified
+	getDeps := !c.Bool(flagNoDeps.Name)
+	if len(modFile.Dependencies) > 0 && getDeps {
+		log.Debug("no dependencies found")
+	} else if getDeps {
 		log.Debugf("resolving %d dependencies", len(modFile.Dependencies))
 		mu := new(sync.Mutex)
 		wg := new(sync.WaitGroup)
