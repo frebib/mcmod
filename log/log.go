@@ -66,26 +66,18 @@ func AddPrefix(log *logrus.Entry, offset int) *logrus.Entry {
 }
 
 func normalisePkgName(s string) (pkg string) {
-	// Split to remove the function name (and brackets)
-	parts := strings.Split(s, ".")
-	partIdx := len(parts) - 2
-
-	// Cut out brackets from package names like
-	//   github.com/urfave/cli/v2.(*Command).Run
-	if parts[partIdx][0] == '(' {
-		partIdx--
-	}
-
 	// Get the last part of the package name
 	// e.g. github.com/frebib/mcmod   ->  mcmod
 	// or   github.com/urfave/cli/v2  ->  cli (make sure to strip the version)
-	parts = strings.Split(parts[partIdx], "/")
-	pkg = parts[len(parts)-1]
+	parts := strings.Split(s, "/")
+	idx := len(parts) - 1
 
 	// Ensure to strip out the
 	if versionRegex.Match([]byte(pkg)) {
 		// we want the part before the `v2` or whatever
-		return parts[len(parts)-2]
+		idx--
 	}
-	return pkg
+
+	// Split to remove the function name (and brackets)
+	return strings.Split(parts[idx], ".")[0]
 }
